@@ -8,37 +8,22 @@ public class Main {
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(bf.readLine()); // 탑의 개수
-		ArrayDeque<Integer> twrs = new ArrayDeque<>(); // 탑 정보 저장할 배열
-		ArrayDeque<int[]> temp = new ArrayDeque<>(); // 수신 위치가 정해지지 않은 타워들 임시저장
-		int[] output = new int[N]; //
-		String input = bf.readLine(); // 탑들 받아오기
-
-		StringTokenizer st = new StringTokenizer(input);
+		StringTokenizer st = new StringTokenizer(bf.readLine()); // 탑들 전부 문자열로 받아옴
+		ArrayDeque<int[]> stack = new ArrayDeque<>();
+		stack.push(new int[] { (int) (1e8 + 1), 0 }); // 최대값 이상의 초기값 stack에 넣음 
+		// 자기보다 이전에 높이가 높은 탑이 없으면(이것과 비교할때는 반드시 작기 때문에), 0의 값을 가지게 해줌
+		StringBuilder output = new StringBuilder();
+		
+		
 		for (int i = 0; i < N; i++) {
-			twrs.push(Integer.parseInt(st.nextToken()));
-		}
-
-		int idx = N - 1; // output에 넣을 위치 저장
-		int preVal = Integer.MAX_VALUE;
-		for (int i = 0; i < N; i++) {
-			int num = twrs.pop(); 
-			if (num < preVal) {
-				temp.push(new int[] { num, idx }); // 탑 높이와 idx정보 함께 저장
-			} else {
-				while (!temp.isEmpty() && temp.peek()[0] < num) {
-					int[] pop = temp.pop();
-					output[pop[1]] = idx + 1;
-				}
-				temp.push(new int[] { num, idx });
+			int h = Integer.parseInt(st.nextToken()); // 높이 입력받음
+			while (stack.peek()[0] < h) { // 자기보다 낮은 것들 다 제거
+				stack.pop();
 			}
-			preVal = num;
-			idx--;
+			output.append(stack.peek()[1]); // 자기보다 높은 stack의 head값이 가리키는 top의 위치가 된다
+			output.append(" ");
+			stack.push(new int[] {h, i+1});
 		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < N; i++) {
-			sb.append(output[i]);
-			sb.append(" ");
-		}
-		System.out.println(sb);
+		System.out.println(output);
 	}
 }
